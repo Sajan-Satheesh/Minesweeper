@@ -58,6 +58,10 @@ private:
 
     int processCells(Cell** Arr, Location loc) {
 
+        Cell* processingCell = &Arr[loc.row][loc.column];
+        processingCell->state = uncovered;
+        toUncover -= 1;
+
         placement place = getPlacement(loc);
         vector<int> rowPossibilities;
         vector<int> colPossibilities;
@@ -110,9 +114,8 @@ private:
             while (!possibilities.empty()) {
                 if (!possibilities.top()->mine && possibilities.top()->state != uncovered) {
                     Location selected(possibilities.top()->rowNum, possibilities.top()->colNum);  
-                    possibilities.top()->state = uncovered;
                     possibilities.top()->adjacentMines = processCells(Arr, selected);
-                    toUncover -= 1;
+                    
                     if (gameDifficulty == medium ) {
                         if (possibilities.top()->adjacentMines > 2) possibilities.top()->state = covered;
                         toUncover += 1;
@@ -178,7 +181,6 @@ public:
             mines.insert(randomCell);
         }
         toUncover -= totalMines ;
-        toUncover--;
         processInput(Arr, uncovered, firstLoc);
     }
 
@@ -220,7 +222,6 @@ public:
                 else {
                     selected->state = action;
                     selected->adjacentMines = processCells(Arr, loc);
-                    toUncover -= 1;
                     if (toUncover == 0) {
                         won = true;
                         gameOver = true;
